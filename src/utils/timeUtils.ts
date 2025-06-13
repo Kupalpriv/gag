@@ -1,48 +1,45 @@
-const PH_TIMEZONE = "Asia/Manila";
-
-export function pad(n: number): string {
-  return n < 10 ? "0" + n : n.toString();
-}
-
-export function getPHTime(): Date {
-  return new Date(new Date().toLocaleString("en-US", { timeZone: PH_TIMEZONE }));
-}
-
-export function getCountdown(target: Date): string {
-  const now = getPHTime();
-  const msLeft = target.getTime() - now.getTime();
-  if (msLeft <= 0) return "00h 00m 00s";
-  const h = Math.floor(msLeft / 3.6e6);
-  const m = Math.floor((msLeft % 3.6e6) / 6e4);
-  const s = Math.floor((msLeft % 6e4) / 1000);
-  return `${pad(h)}h ${pad(m)}m ${pad(s)}s`;
-}
-
-export function getNextRestocks(): Record<string, string> {
-  const now = getPHTime();
-  const timers: Record<string, string> = {};
+export const formatTimeAgo = (date: Date): string => {
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
   
-  const nextEgg = new Date(now);
-  nextEgg.setMinutes(now.getMinutes() < 30 ? 30 : 0);
-  if (now.getMinutes() >= 30) nextEgg.setHours(now.getHours() + 1);
-  nextEgg.setSeconds(0, 0);
-  timers.egg = getCountdown(nextEgg);
+  if (diffInSeconds < 60) {
+    return 'Just now';
+  }
   
-  const next5 = new Date(now);
-  const nextM = Math.ceil((now.getMinutes() + (now.getSeconds() > 0 ? 1 : 0)) / 5) * 5;
-  next5.setMinutes(nextM === 60 ? 0 : nextM, 0, 0);
-  if (nextM === 60) next5.setHours(now.getHours() + 1);
-  timers.gear = timers.seed = getCountdown(next5);
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes}m ago`;
+  }
   
-  const nextHour = new Date(now);
-  nextHour.setHours(now.getHours() + 1, 0, 0, 0);
-  timers.honey = getCountdown(nextHour);
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return `${diffInHours}h ago`;
+  }
+  
+  const diffInDays = Math.floor(diffInHours / 24);
+  return `${diffInDays}d ago`;
+};
 
-  const next7 = new Date(now);
-  const totalHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
-  const next7h = Math.ceil(totalHours / 7) * 7;
-  next7.setHours(next7h, 0, 0, 0);
-  timers.cosmetics = getCountdown(next7);
+export const parseCountdown = (countdown: string): { hours: number; minutes: number; seconds: number } => {
+  const match = countdown.match(/(\d+)h\s*(\d+)m\s*(\d+)s/);
+  if (match) {
+    return {
+      hours: parseInt(match[1], 10),
+      minutes: parseInt(match[2], 10),
+      seconds: parseInt(match[3], 10)
+    };
+  }
+  return { hours: 0, minutes: 0, seconds: 0 };
+};
 
-  return timers;
-}
+export const formatCountdown = (countdown: string): string => {
+  const { hours, minutes, seconds } = parseCountdown(countdown);
+  
+  if (hours > 0) {
+    return `${hours}h ${minutes}m`;
+  }
+  if (minutes > 0) {
+    return `${minutes}m ${seconds}s`;
+  }
+  return `${seconds}s`;
+};
