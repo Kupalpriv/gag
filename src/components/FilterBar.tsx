@@ -1,51 +1,71 @@
 import React from 'react';
-import { Search, RefreshCw } from 'lucide-react';
+import { FilterType } from '../types';
 
 interface FilterBarProps {
-  filter: string;
-  onFilterChange: (filter: string) => void;
-  onRefresh: () => void;
-  isLoading: boolean;
+  activeFilter: FilterType;
+  onFilterChange: (filter: FilterType) => void;
+  stockData: any;
 }
 
-export function FilterBar({ filter, onFilterChange, onRefresh, isLoading }: FilterBarProps) {
+const FilterBar: React.FC<FilterBarProps> = ({ activeFilter, onFilterChange, stockData }) => {
+  const filters: { key: FilterType; label: string; icon: string }[] = [
+    { key: 'all', label: 'All Items', icon: '📦' },
+    { key: 'gear', label: 'Gear', icon: '⚙️' },
+    { key: 'egg', label: 'Eggs', icon: '🥚' },
+    { key: 'seed', label: 'Seeds', icon: '🌱' },
+    { key: 'honey', label: 'Honey', icon: '🍯' },
+    { key: 'cosmetics', label: 'Cosmetics', icon: '💄' },
+  ];
+
+  const getItemCount = (filterKey: FilterType) => {
+    if (filterKey === 'all') {
+      return stockData ? Object.values(stockData).reduce((total: number, category: any) => {
+        return total + (category.items ? category.items.length : 0);
+      }, 0) : 0;
+    }
+    return stockData && stockData[filterKey] ? stockData[filterKey].items.length : 0;
+  };
+
   return (
-    <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-200 mb-6">
-      <div className="flex flex-col sm:flex-row gap-4 items-center">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search for items (e.g., Watering Can, Sunflower, Egg...)"
-            value={filter}
-            onChange={(e) => onFilterChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
-          />
-        </div>
+    <div className="bg-white rounded-xl shadow-lg p-6 mb-6 border border-gray-100">
+      <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+        <h2 className="text-lg font-semibold text-gray-800">Filter Categories</h2>
         
-        <button
-          onClick={onRefresh}
-          disabled={isLoading}
-          className="flex items-center space-x-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-          <span>Refresh</span>
-        </button>
-      </div>
-      
-      {filter && (
-        <div className="mt-3 flex items-center justify-between">
-          <p className="text-sm text-gray-600">
-            Filtering by: <span className="font-medium text-emerald-600">"{filter}"</span>
-          </p>
-          <button
-            onClick={() => onFilterChange('')}
-            className="text-sm text-gray-500 hover:text-gray-700 underline"
-          >
-            Clear filter
-          </button>
+        <div className="flex flex-wrap gap-2">
+          {filters.map((filter) => {
+            const itemCount = getItemCount(filter.key);
+            const isActive = activeFilter === filter.key;
+            
+            return (
+              <button
+                key={filter.key}
+                onClick={() => onFilterChange(filter.key)}
+                className={`
+                  flex items-center space-x-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200
+                  ${isActive 
+                    ? 'bg-blue-500 text-white shadow-md transform scale-105' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
+                  }
+                `}
+              >
+                <span>{filter.icon}</span>
+                <span>{filter.label}</span>
+                <span className={`
+                  text-xs px-2 py-1 rounded-full font-bold
+                  ${isActive 
+                    ? 'bg-white/20 text-white' 
+                    : 'bg-gray-200 text-gray-600'
+                  }
+                `}>
+                  {itemCount}
+                </span>
+              </button>
+            );
+          })}
         </div>
-      )}
+      </div>
     </div>
   );
-}
+};
+
+export default FilterBar;
