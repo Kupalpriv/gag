@@ -21,27 +21,23 @@ export function getCountdown(target: Date): string {
 export function getNextRestocks(): Record<string, string> {
   const now = getPHTime();
   const timers: Record<string, string> = {};
-
-  // Egg restock - every 30 minutes
+  
   const nextEgg = new Date(now);
   nextEgg.setMinutes(now.getMinutes() < 30 ? 30 : 0);
   if (now.getMinutes() >= 30) nextEgg.setHours(now.getHours() + 1);
   nextEgg.setSeconds(0, 0);
   timers.egg = getCountdown(nextEgg);
-
-  // Gear and seed restock - every 5 minutes
+  
   const next5 = new Date(now);
   const nextM = Math.ceil((now.getMinutes() + (now.getSeconds() > 0 ? 1 : 0)) / 5) * 5;
   next5.setMinutes(nextM === 60 ? 0 : nextM, 0, 0);
   if (nextM === 60) next5.setHours(now.getHours() + 1);
   timers.gear = timers.seed = getCountdown(next5);
-
-  // Honey restock - every hour
+  
   const nextHour = new Date(now);
   nextHour.setHours(now.getHours() + 1, 0, 0, 0);
   timers.honey = getCountdown(nextHour);
 
-  // Cosmetics restock - every 7 hours
   const next7 = new Date(now);
   const totalHours = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
   const next7h = Math.ceil(totalHours / 7) * 7;
