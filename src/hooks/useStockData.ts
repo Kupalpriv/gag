@@ -1,3 +1,4 @@
+// src/hooks/useStockData.ts
 import { useState, useEffect } from 'react';
 import { ApiResponse, StockData, WeatherData } from '../types';
 
@@ -15,14 +16,14 @@ export const useStockData = () => {
     try {
       setLoading(true);
       setError(null);
-      
+
       const response = await fetch(STOCK_API_URL);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data: ApiResponse = await response.json();
-      
+
       if (data.status === 'success') {
         setStockData(data.data);
         setLastUpdated(data.updated_at);
@@ -43,12 +44,11 @@ export const useStockData = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const data: WeatherData = await response.json();
       setWeatherData(data);
     } catch (err) {
       console.error('Error fetching weather data:', err);
-      // Don't set error for weather as it's secondary data
     }
   };
 
