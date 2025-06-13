@@ -1,74 +1,52 @@
-// src/hooks/useStockData.ts
 import { useState, useEffect } from 'react';
-import { ApiResponse, StockData, WeatherData } from '../types';
+import { ApiResponse, WeatherData } from '../types';
 
 const proxy = 'https://corsproxy.io/?';
 const STOCK_API_URL = proxy + 'https://gagstock.gleeze.com/grow-a-garden';
 const WEATHER_API_URL = proxy + 'https://growagardenstock.com/api/stock/weather';
 
 export const useStockData = () => {
-  const [stockData, setStockData] = useState<StockData | null>(null);
+  const [stockData, setStockData] = useState<ApiResponse | null>(null);
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string>('');
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  const fetchStockData = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(STOCK_API_URL);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const [stockResponse, weatherResponse] = await Promise.all([
+        fetch(STOCK_API_URL),
+        fetch(WEATHER_API_URL)
+      ]);
+
+      if (!stockResponse.ok || !weatherResponse.ok) {
+        throw new Error('Failed to fetch data');
       }
 
-      const data: ApiResponse = await response.json();
+      const stockResult = await stockResponse.json();
+      const weatherResult = await weatherResponse.json();
 
-      if (data.status === 'success') {
-        setStockData(data.data);
-        setLastUpdated(data.updated_at);
-      } else {
-        throw new Error('API returned error status');
-      }
+      setStockData(stockResult);
+      setWeatherData(weatherResult);
+      setLastUpdated(new Date());
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch stock data');
-      console.error('Error fetching stock data:', err);
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchWeatherData = async () => {
-    try {
-      const response = await fetch(WEATHER_API_URL);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data: WeatherData = await response.json();
-      setWeatherData(data);
-    } catch (err) {
-      console.error('Error fetching weather data:', err);
-    }
-  };
-
   useEffect(() => {
-    fetchStockData();
-    fetchWeatherData();
-
-    const interval = setInterval(() => {
-      fetchStockData();
-      fetchWeatherData();
-    }, 30000);
-
+    fetchData();
+    
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(fetchData, 30000);
+    
     return () => clearInterval(interval);
   }, []);
-
-  const refreshData = () => {
-    fetchStockData();
-    fetchWeatherData();
-  };
 
   return {
     stockData,
@@ -76,6 +54,6 @@ export const useStockData = () => {
     loading,
     error,
     lastUpdated,
-    refreshData
+    refetch: fetchData
   };
 };
