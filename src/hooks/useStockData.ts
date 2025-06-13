@@ -2,8 +2,9 @@
 import { useState, useEffect } from 'react';
 import { ApiResponse, StockData, WeatherData } from '../types';
 
-const STOCK_API_URL = 'https://gagstock.gleeze.com/grow-a-garden';
-const WEATHER_API_URL = 'https://growagardenstock.com/api/stock/weather';
+const proxy = 'https://corsproxy.io/?';
+const STOCK_API_URL = proxy + 'https://gagstock.gleeze.com/grow-a-garden';
+const WEATHER_API_URL = proxy + 'https://growagardenstock.com/api/stock/weather';
 
 export const useStockData = () => {
   const [stockData, setStockData] = useState<StockData | null>(null);
