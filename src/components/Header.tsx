@@ -1,37 +1,50 @@
 import React from 'react';
-import { Sprout, Github, ExternalLink } from 'lucide-react';
+import { formatLastUpdated } from '../utils/formatUtils';
 
-export function Header() {
+interface HeaderProps {
+  lastUpdated: string;
+  loading: boolean;
+  onRefresh: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ lastUpdated, loading, onRefresh }) => {
   return (
-    <header className="bg-gradient-to-r from-emerald-600 to-green-700 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <header className="bg-gradient-to-r from-green-600 to-blue-600 text-white shadow-lg">
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
           <div className="flex items-center space-x-3">
-            <div className="bg-white/20 rounded-lg p-2">
-              <Sprout className="h-8 w-8 text-white" />
+            <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+              <span className="text-2xl">🌱</span>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Grow A Garden</h1>
-              <p className="text-emerald-100 text-sm">Stock Tracker</p>
+              <h1 className="text-2xl sm:text-3xl font-bold">GAG Stock Tracker</h1>
+              <p className="text-sm opacity-90">Grow A Garden - Live Stock Monitor</p>
             </div>
           </div>
           
           <div className="flex items-center space-x-4">
             <div className="text-right">
-              <p className="text-white text-sm font-medium">Created by Churchill</p>
-              <a 
-                href="https://www.facebook.com/Churchill.Dev4100" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-emerald-200 hover:text-white text-xs flex items-center space-x-1 transition-colors"
-              >
-                <ExternalLink className="h-3 w-3" />
-                <span>Facebook Profile</span>
-              </a>
+              <div className="text-xs opacity-75">Last Updated</div>
+              <div className="text-sm font-mono">
+                {lastUpdated ? formatLastUpdated(lastUpdated) : 'Never'}
+              </div>
             </div>
+            
+            <button
+              onClick={onRefresh}
+              disabled={loading}
+              className="bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 flex items-center space-x-2"
+            >
+              <span className={`${loading ? 'animate-spin' : ''}`}>
+                {loading ? '⟳' : '🔄'}
+              </span>
+              <span>{loading ? 'Refreshing...' : 'Refresh'}</span>
+            </button>
           </div>
         </div>
       </div>
     </header>
   );
-}
+};
+
+export default Header;
