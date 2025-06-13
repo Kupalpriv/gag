@@ -18,12 +18,6 @@ export interface StockData {
   updated_at: string;
 }
 
-export interface ApiResponse {
-  status: string;
-  updated_at: string;
-  data: StockData;
-}
-
 export interface WeatherData {
   icon: string;
   description: string;
@@ -37,4 +31,10 @@ export interface WeatherData {
   effectDescription: string;
 }
 
-export type FilterType = 'all' | 'gear' | 'egg' | 'seed' | 'honey' | 'cosmetics';
+export interface ApiResponse {
+  status: string;
+  updated_at: string;
+  data: StockData;
+}
+
+export type CategoryKey = keyof Omit<StockData, 'updated_at'>;
