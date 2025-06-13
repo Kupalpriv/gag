@@ -1,114 +1,84 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useStockData } from './hooks/useStockData';
-import { FilterType } from './types';
-import Header from './components/Header';
-import FilterBar from './components/FilterBar';
-import StockSection from './components/StockSection';
-import WeatherCard from './components/WeatherCard';
+import { Header } from './components/Header';
+import { WeatherCard } from './components/WeatherCard';
+import { StockSection } from './components/StockSection';
+import { StockSummary } from './components/StockSummary';
+import { LoadingSpinner } from './components/LoadingSpinner';
+import { ErrorMessage } from './components/ErrorMessage';
+import { CategoryKey } from './types';
 
 function App() {
-  const { stockData, weatherData, loading, error, lastUpdated, refreshData } = useStockData();
-  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
-          <div className="text-6xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Connection Error</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <button
-            onClick={refreshData}
-            className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const { stockData, weatherData, loading, error, lastUpdated, refetch } = useStockData();
 
   if (loading && !stockData) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
-          <div className="animate-spin text-6xl mb-4">🌱</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Loading GAG Stock Data</h2>
-          <p className="text-gray-600">Fetching the latest inventory...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
+  if (error && !stockData) {
+    return <ErrorMessage message={error} onRetry={refetch} />;
+  }
+
+  if (!stockData) {
+    return <ErrorMessage message="No data available" onRetry={refetch} />;
+  }
+
+  const categories: CategoryKey[] = ['gear', 'egg', 'seed', 'honey', 'cosmetics'];
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-blue-50">
       <Header 
-        lastUpdated={lastUpdated}
-        loading={loading}
-        onRefresh={refreshData}
+        lastUpdated={lastUpdated} 
+        onRefresh={refetch} 
+        loading={loading} 
       />
       
-      <main className="container mx-auto px-4 py-8">
-        {/* Weather Card */}
-        <div className="mb-8">
-          <WeatherCard weatherData={weatherData} loading={loading} />
-        </div>
-
-        {/* Filter Bar */}
-        {stockData && (
-          <FilterBar 
-            activeFilter={activeFilter}
-            onFilterChange={setActiveFilter}
-            stockData={stockData}
-          />
-        )}
-
-        {/* Stock Sections */}
-        {stockData && (
-          <div className="space-y-8">
-            <StockSection 
-              title="Gear" 
-              category={stockData.gear} 
-              categoryKey="gear"
-              activeFilter={activeFilter}
-            />
-            <StockSection 
-              title="Eggs" 
-              category={stockData.egg} 
-              categoryKey="egg"
-              activeFilter={activeFilter}
-            />
-            <StockSection 
-              title="Seeds" 
-              category={stockData.seed} 
-              categoryKey="seed"
-              activeFilter={activeFilter}
-            />
-            <StockSection 
-              title="Honey" 
-              category={stockData.honey} 
-              categoryKey="honey"
-              activeFilter={activeFilter}
-            />
-            <StockSection 
-              title="Cosmetics" 
-              category={stockData.cosmetics} 
-              categoryKey="cosmetics"
-              activeFilter={activeFilter}
-            />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-8">
+          {/* Weather and Summary Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1">
+              {weatherData && <WeatherCard weather={weatherData} />}
+            </div>
+            <div className="lg:col-span-2">
+              <StockSummary stockData={stockData.data} />
+            </div>
           </div>
-        )}
-
-        {/* Footer */}
-        <footer className="mt-16 text-center text-gray-500 text-sm">
-          <p>GAG Stock Tracker • Data refreshes every 30 seconds</p>
-          <p className="mt-1">
-            API: <a href="https://gagstock.gleeze.com/grow-a-garden" className="text-blue-500 hover:underline" target="_blank" rel="noopener noreferrer">
-              gagstock.gleeze.com
-            </a>
-          </p>
-        </footer>
+          
+          {/* Stock Sections */}
+          <div className="space-y-6">
+            {categories.map((category) => (
+              <StockSection
+                key={category}
+                category={category}
+                data={stockData.data[category]}
+              />
+            ))}
+          </div>
+        </div>
       </main>
+      
+      {/* Footer */}
+      <footer className="bg-white border-t border-gray-200 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="text-center text-gray-600">
+            <p className="text-sm">
+              Grow a Garden Stock Tracker • Data updates every 30 seconds
+            </p>
+            <p className="text-xs mt-1">
+              Created by{' '}
+              <a 
+                href="https://www.facebook.com/Churchill.Dev4100" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-green-600 hover:text-green-700 font-medium"
+              >
+                Churchill.Dev
+              </a>
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
