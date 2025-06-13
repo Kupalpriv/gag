@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { StockData, WeatherData, RestockTimers } from '../types';
 import { getNextRestocks, getPHTime } from '../utils/timeUtils';
 
-// Mock data for demonstration
 const mockStockData: StockData = {
   gearStock: [
     { name: "Watering Can", value: 245 },
@@ -85,10 +84,10 @@ export function useStockData() {
     return () => clearInterval(interval);
   }, []);
 
-  // Simulate periodic data updates
+  
   useEffect(() => {
     const interval = setInterval(() => {
-      // Randomly update some stock values to simulate real changes
+      
       setStockData(prev => ({
         ...prev,
         gearStock: prev.gearStock.map(item => ({
@@ -101,14 +100,14 @@ export function useStockData() {
         }))
       }));
       setLastUpdated(new Date());
-    }, 30000); // Update every 30 seconds
+    }, 30000); 
 
     return () => clearInterval(interval);
   }, []);
 
   const refreshData = async () => {
     setIsLoading(true);
-    // Simulate API call delay
+    
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Simulate fresh data
