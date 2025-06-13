@@ -1,27 +1,40 @@
 export interface StockItem {
   name: string;
-  value: number;
+  quantity: number;
+  image: string;
+}
+
+export interface StockCategory {
+  items: StockItem[];
+  countdown: string;
 }
 
 export interface StockData {
-  gearStock: StockItem[];
-  seedsStock: StockItem[];
-  eggStock: StockItem[];
-  honeyStock: StockItem[];
-  cosmeticsStock: StockItem[];
+  gear: StockCategory;
+  egg: StockCategory;
+  seed: StockCategory;
+  honey: StockCategory;
+  cosmetics: StockCategory;
+  updated_at: string;
+}
+
+export interface ApiResponse {
+  status: string;
+  updated_at: string;
+  data: StockData;
 }
 
 export interface WeatherData {
-  currentWeather: string;
   icon: string;
+  description: string;
+  visualCue: string;
   cropBonuses: string;
-  updatedAt: string;
+  mutations: string[];
+  rarity: string;
+  updatedAt: number;
+  currentWeather: string;
+  weatherType: string;
+  effectDescription: string;
 }
 
-export interface RestockTimers {
-  egg: string;
-  gear: string;
-  seed: string;
-  honey: string;
-  cosmetics: string;
-}
+export type FilterType = 'all' | 'gear' | 'egg' | 'seed' | 'honey' | 'cosmetics';
