@@ -125,116 +125,33 @@ function App() {
       </main>
 
       <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="col-span-1 md:col-span-2">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">🌱</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 rounded-xl p-6 shadow-lg inline-block">
+              <div className="flex items-center justify-center space-x-4">
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                  <span className="text-2xl">👨‍💻</span>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold">Grow a Garden Tracker</h3>
-                  <p className="text-gray-400 text-sm">Professional Stock & Weather Monitor</p>
+                <div className="text-center">
+                  <h4 className="text-lg font-semibold text-white">Crafted by Churchill</h4>
                 </div>
-              </div>
-              <p className="text-gray-300 leading-relaxed max-w-md">
-                Stay updated with real-time stock information and weather conditions for your garden. 
-                Track inventory, monitor restocks, and plan your gardening activities with precision.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-semibold mb-4 text-emerald-400">Features</h4>
-              <ul className="space-y-2 text-gray-300">
-                <li className="flex items-center space-x-2">
-                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
-                  <span>Real-time Stock Tracking</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
-                  <span>Weather Monitoring</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
-                  <span>Live Countdown Timers</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
-                  <span>Advanced Search & Filters</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
-                  <span>Responsive Design</span>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-lg font-semibold mb-4 text-blue-400">Statistics</h4>
-              <div className="space-y-3">
-                <div className="bg-gray-800 rounded-lg p-3">
-                  <div className="text-2xl font-bold text-white">
-                    {stockData?.data ? 
-                      Object.values(stockData.data)
-                        .filter(item => typeof item === 'object' && item.items)
-                        .reduce((sum, category: any) => sum + category.items.length, 0) 
-                      : '0'
-                    }
-                  </div>
-                  <div className="text-gray-400 text-sm">Item Types Tracked</div>
-                </div>
-                <div className="bg-gray-800 rounded-lg p-3">
-                  <div className="text-2xl font-bold text-white">5</div>
-                  <div className="text-gray-400 text-sm">Categories</div>
-                </div>
-                <div className="bg-gray-800 rounded-lg p-3">
-                  <div className="text-2xl font-bold text-white">24/7</div>
-                  <div className="text-gray-400 text-sm">Monitoring</div>
-                </div>
+                <a 
+                  href="https://www.facebook.com/Churchill.Dev4100" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-white/20 hover:bg-white/30 text-white p-3 rounded-lg transition-all duration-300 hover:scale-105 backdrop-blur-sm group"
+                >
+                  <svg className="w-5 h-5 text-blue-300 group-hover:text-blue-200 transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                </a>
               </div>
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t border-gray-700">
-            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 rounded-xl p-6 mb-6 shadow-lg">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
-                    <span className="text-2xl">👨‍💻</span>
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-semibold text-white">Developed by Churchill</h4>
-                    <p className="text-blue-100 text-sm">tyortyil abinega Developer</p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-red-400 text-lg">❤️</span>
-                  <a 
-                    href="https://www.facebook.com/Churchill.Dev4100" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105 backdrop-blur-sm flex items-center space-x-2"
-                  >
-                    <span className="text-blue-300">📘</span>
-                    <span>Facebook</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-700 pt-8 flex flex-col sm:flex-row justify-between items-center">
+          <div className="border-t border-gray-700 mt-6 pt-6 text-center">
             <div className="text-gray-400 text-sm">
-              © 2025 chillimansi. Built with React & TypeScript.
-            </div>
-            <div className="flex items-center space-x-4 mt-4 sm:mt-0">
-              <div className="flex items-center space-x-2 text-gray-400 text-sm">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span>Live Data</span>
-              </div>
-              <div className="text-gray-400 text-sm">
-                Last updated: {lastUpdated ? lastUpdated.toLocaleTimeString() : 'Never'}
-              </div>
+              © 2025 chillimansi.
             </div>
           </div>
         </div>
