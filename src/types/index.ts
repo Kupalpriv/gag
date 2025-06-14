@@ -4,17 +4,17 @@ export interface StockItem {
   image: string;
 }
 
-export interface StockCategory {
+export interface CategoryData {
   items: StockItem[];
   countdown: string;
 }
 
 export interface StockData {
-  gear: StockCategory;
-  egg: StockCategory;
-  seed: StockCategory;
-  honey: StockCategory;
-  cosmetics: StockCategory;
+  gear: CategoryData;
+  egg: CategoryData;
+  seed: CategoryData;
+  honey: CategoryData;
+  cosmetics: CategoryData;
   updated_at: string;
 }
 
@@ -37,4 +37,4 @@ export interface ApiResponse {
   data: StockData;
 }
 
-export type CategoryKey = keyof Omit<StockData, 'updated_at'>;
+export type CategoryType = 'gear' | 'egg' | 'seed' | 'honey' | 'cosmetics';
