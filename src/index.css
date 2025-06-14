@@ -2,9 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom CSS Variables for Enhanced Theming */
 :root {
-  /* Primary Colors */
+  
   --color-primary-50: #ecfdf5;
   --color-primary-100: #d1fae5;
   --color-primary-200: #a7f3d0;
