@@ -1,5 +1,4 @@
 import React from 'react';
-import { Cloud, CloudRain, Sun, CloudSnow, Wind } from 'lucide-react';
 import { WeatherData } from '../types';
 
 interface WeatherCardProps {
@@ -31,31 +30,36 @@ const getWeatherEmoji = (weatherType: string, description: string): string => {
     return '☀️';
   }
   
-  // Default based on description keywords
+  // Check for "ended" weather
   if (description?.toLowerCase().includes('ended')) {
     return '🌤️'; // Sun behind cloud for "ended" weather
   }
   
-  return '🌤️'; // Default partly cloudy
+  return weather.icon || '🌤️'; // Use API icon or default
 };
 
 const getWeatherGradient = (weatherType: string, description: string): string => {
   const weather = weatherType?.toLowerCase() || description?.toLowerCase() || '';
   
   if (weather.includes('rain') || weather.includes('rainy')) {
-    return 'from-blue-600 to-blue-800';
+    return 'from-blue-400 to-blue-600';
   }
   if (weather.includes('storm')) {
-    return 'from-gray-700 to-gray-900';
+    return 'from-gray-600 to-gray-800';
   }
   if (weather.includes('snow')) {
-    return 'from-blue-300 to-blue-500';
+    return 'from-blue-200 to-blue-400';
   }
   if (weather.includes('cloud') || weather.includes('overcast')) {
-    return 'from-gray-500 to-gray-700';
+    return 'from-gray-400 to-gray-600';
   }
   if (weather.includes('clear') || weather.includes('sunny')) {
     return 'from-yellow-400 to-orange-500';
+  }
+  
+  // For "ended" weather, use a neutral gradient
+  if (description?.toLowerCase().includes('ended')) {
+    return 'from-green-400 to-teal-500';
   }
   
   return 'from-blue-400 to-blue-600'; // Default
@@ -65,10 +69,9 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({ weather }) => {
   const weatherEmoji = getWeatherEmoji(weather.weatherType, weather.description);
   const gradientClass = getWeatherGradient(weather.weatherType, weather.description);
   
-  // Fix the date formatting
   const formatDate = (timestamp: number): string => {
     try {
-      const date = new Date(timestamp * 1000);
+      const date = new Date(timestamp);
       return date.toLocaleString('en-PH', {
         timeZone: 'Asia/Manila',
         month: 'short',
@@ -84,17 +87,17 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({ weather }) => {
   };
 
   return (
-    <div className={`bg-gradient-to-br ${gradientClass} rounded-xl p-6 text-white relative overflow-hidden shadow-lg`}>
+    <div className={`bg-gradient-to-br ${gradientClass} rounded-xl p-4 sm:p-6 text-white relative overflow-hidden shadow-lg`}>
       {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12"></div>
+      <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-white/10 rounded-full -translate-y-12 sm:-translate-y-16 translate-x-12 sm:translate-x-16"></div>
+      <div className="absolute bottom-0 left-0 w-16 sm:w-24 h-16 sm:h-24 bg-white/5 rounded-full translate-y-8 sm:translate-y-12 -translate-x-8 sm:-translate-x-12"></div>
       
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="text-4xl">{weatherEmoji}</div>
+            <div className="text-3xl sm:text-4xl">{weatherEmoji}</div>
             <div>
-              <h3 className="font-bold text-lg">Current Weather</h3>
+              <h3 className="font-bold text-base sm:text-lg">Current Weather</h3>
               <p className="text-white/90 text-sm">{weather.currentWeather || weather.description}</p>
             </div>
           </div>

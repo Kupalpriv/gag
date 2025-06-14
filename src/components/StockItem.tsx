@@ -14,27 +14,27 @@ export const StockItem: React.FC<StockItemProps> = ({ item }) => {
     switch (stockStatus) {
       case 'in-stock':
         return {
-          bgColor: 'bg-gray-700/80 hover:bg-gray-600/80',
-          borderColor: 'border-green-500/50 hover:border-green-400',
-          textColor: 'text-green-400',
-          icon: <CheckCircle className="h-4 w-4" />,
-          badge: 'bg-green-500/20 text-green-400 border-green-500/30'
+          bgColor: 'bg-white hover:bg-gray-50',
+          borderColor: 'border-green-200 hover:border-green-300',
+          textColor: 'text-green-600',
+          icon: <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />,
+          badge: 'bg-green-100 text-green-700 border-green-200'
         };
       case 'low-stock':
         return {
-          bgColor: 'bg-gray-700/80 hover:bg-gray-600/80',
-          borderColor: 'border-yellow-500/50 hover:border-yellow-400',
-          textColor: 'text-yellow-400',
-          icon: <AlertTriangle className="h-4 w-4" />,
-          badge: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+          bgColor: 'bg-white hover:bg-gray-50',
+          borderColor: 'border-yellow-200 hover:border-yellow-300',
+          textColor: 'text-yellow-600',
+          icon: <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4" />,
+          badge: 'bg-yellow-100 text-yellow-700 border-yellow-200'
         };
       case 'out-of-stock':
         return {
-          bgColor: 'bg-gray-800/80 hover:bg-gray-700/80',
-          borderColor: 'border-red-500/50 hover:border-red-400',
-          textColor: 'text-red-400',
-          icon: <XCircle className="h-4 w-4" />,
-          badge: 'bg-red-500/20 text-red-400 border-red-500/30'
+          bgColor: 'bg-gray-50 hover:bg-gray-100',
+          borderColor: 'border-red-200 hover:border-red-300',
+          textColor: 'text-red-600',
+          icon: <XCircle className="h-3 w-3 sm:h-4 sm:w-4" />,
+          badge: 'bg-red-100 text-red-700 border-red-200'
         };
     }
   };
@@ -48,11 +48,11 @@ export const StockItem: React.FC<StockItemProps> = ({ item }) => {
   const statusConfig = getStatusConfig();
 
   return (
-    <div className={`${statusConfig.bgColor} ${statusConfig.borderColor} rounded-xl border-2 p-4 transition-all duration-300 hover:shadow-lg hover:scale-105 backdrop-blur-sm`}>
+    <div className={`${statusConfig.bgColor} ${statusConfig.borderColor} rounded-xl border-2 p-3 sm:p-4 transition-all duration-300 hover:shadow-lg hover:scale-105`}>
       <div className="flex items-start space-x-3">
         {/* Item Image */}
         <div className="flex-shrink-0">
-          <div className="w-12 h-12 bg-white rounded-lg p-1 shadow-sm">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg p-1 shadow-sm">
             <img
               src={item.image}
               alt={item.name}
@@ -68,11 +68,11 @@ export const StockItem: React.FC<StockItemProps> = ({ item }) => {
         
         {/* Item Details */}
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-white text-sm mb-2 line-clamp-2 leading-tight">
+          <h4 className="font-semibold text-gray-800 text-sm mb-2 line-clamp-2 leading-tight">
             {item.name}
           </h4>
           
-          <div className={`inline-flex items-center space-x-2 px-3 py-1 rounded-lg border text-xs font-bold ${statusConfig.badge}`}>
+          <div className={`inline-flex items-center space-x-2 px-2 sm:px-3 py-1 rounded-lg border text-xs font-bold ${statusConfig.badge}`}>
             {statusConfig.icon}
             <span>{getQuantityDisplay()}</span>
           </div>
