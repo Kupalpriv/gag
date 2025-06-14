@@ -14,13 +14,11 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
 
-  // Filter stock data based on search and category
   const filteredStockData = useMemo(() => {
     if (!stockData?.data) return null;
 
     const filtered = { ...stockData.data };
 
-    // Apply category filter
     if (categoryFilter) {
       Object.keys(filtered).forEach(key => {
         if (key !== 'updated_at' && key !== categoryFilter) {
@@ -29,7 +27,6 @@ function App() {
       });
     }
 
-    // Apply search filter
     if (searchQuery) {
       Object.keys(filtered).forEach(key => {
         if (key !== 'updated_at') {
@@ -71,7 +68,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-indigo-100">
-      {/* Header */}
       <Header
         lastUpdated={lastUpdated}
         onRefresh={refetch}
@@ -79,29 +75,23 @@ function App() {
         isOnline={navigator.onLine}
       />
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-8">
-          {/* Search and Filters */}
           <SearchBar
             onSearch={setSearchQuery}
             onCategoryFilter={setCategoryFilter}
           />
 
-          {/* Weather and Summary Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Weather Card */}
             {weatherData && (
               <WeatherCard weather={weatherData} />
             )}
 
-            {/* Stock Summary */}
             {filteredStockData?.data && (
               <StockSummary stockData={filteredStockData.data} />
             )}
           </div>
 
-          {/* Category Cards */}
           {filteredStockData?.data && (
             <div className="space-y-8">
               {Object.entries(filteredStockData.data).map(([category, data]) => {
@@ -119,7 +109,6 @@ function App() {
             </div>
           )}
 
-          {/* No Results Message */}
           {filteredStockData?.data && 
            Object.keys(filteredStockData.data).filter(key => key !== 'updated_at').length === 0 && (
             <div className="text-center py-16">
@@ -135,11 +124,9 @@ function App() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Brand */}
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-blue-500 rounded-lg flex items-center justify-center">
@@ -156,7 +143,6 @@ function App() {
               </p>
             </div>
 
-            {/* Features */}
             <div>
               <h4 className="text-lg font-semibold mb-4 text-emerald-400">Features</h4>
               <ul className="space-y-2 text-gray-300">
@@ -183,7 +169,6 @@ function App() {
               </ul>
             </div>
 
-            {/* Stats */}
             <div>
               <h4 className="text-lg font-semibold mb-4 text-blue-400">Statistics</h4>
               <div className="space-y-3">
@@ -210,10 +195,37 @@ function App() {
             </div>
           </div>
 
-          {/* Bottom Bar */}
-          <div className="border-t border-gray-700 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
+          <div className="mt-8 pt-8 border-t border-gray-700">
+            <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 rounded-xl p-6 mb-6 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <span className="text-2xl">👨‍💻</span>
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-semibold text-white">Developed by Churchill</h4>
+                    <p className="text-blue-100 text-sm">tyortyil abinega Developer</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-red-400 text-lg">❤️</span>
+                  <a 
+                    href="https://www.facebook.com/Churchill.Dev4100" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all duration-300 hover:scale-105 backdrop-blur-sm flex items-center space-x-2"
+                  >
+                    <span className="text-blue-300">📘</span>
+                    <span>Facebook</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-700 pt-8 flex flex-col sm:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm">
-              © 2024 Grow a Garden Tracker. Built with React & TypeScript.
+              © 2025 chillimansi. Built with React & TypeScript.
             </div>
             <div className="flex items-center space-x-4 mt-4 sm:mt-0">
               <div className="flex items-center space-x-2 text-gray-400 text-sm">
