@@ -22,18 +22,23 @@ export const useStockData = () => {
         fetch(WEATHER_API_URL)
       ]);
 
-      if (!stockResponse.ok || !weatherResponse.ok) {
-        throw new Error('Failed to fetch data');
+      if (!stockResponse.ok) {
+        throw new Error(`Stock API error: ${stockResponse.status}`);
       }
 
-      const stockResult = await stockResponse.json();
-      const weatherResult = await weatherResponse.json();
+      if (!weatherResponse.ok) {
+        throw new Error(`Weather API error: ${weatherResponse.status}`);
+      }
+
+      const stockResult: ApiResponse = await stockResponse.json();
+      const weatherResult: WeatherData = await weatherResponse.json();
 
       setStockData(stockResult);
       setWeatherData(weatherResult);
       setLastUpdated(new Date());
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      setError(err instanceof Error ? err.message : 'Failed to fetch data');
+      console.error('API Error:', err);
     } finally {
       setLoading(false);
     }
@@ -42,8 +47,8 @@ export const useStockData = () => {
   useEffect(() => {
     fetchData();
     
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(fetchData, 30000);
+    // Auto-refresh every 5 minutes
+    const interval = setInterval(fetchData, 5 * 60 * 1000);
     
     return () => clearInterval(interval);
   }, []);
