@@ -1,83 +1,156 @@
 import React from 'react';
-import { TrendingUp, Package, AlertTriangle, CheckCircle } from 'lucide-react';
 import { StockData } from '../types';
+import { Package, TrendingUp, Layers, BarChart3 } from 'lucide-react';
 
 interface StockSummaryProps {
   stockData: StockData;
+  className?: string;
 }
 
-export const StockSummary: React.FC<StockSummaryProps> = ({ stockData }) => {
-  const categories = ['gear', 'egg', 'seed', 'honey', 'cosmetics'] as const;
-  
-  const stats = categories.reduce((acc, category) => {
-    const items = stockData[category]?.items || [];
-    const totalItems = items.length;
-    const availableItems = items.filter(item => item.quantity > 0).length;
-    const lowStockItems = items.filter(item => item.quantity > 0 && item.quantity <= 2).length;
-    const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
-    
-    acc.totalItems += totalItems;
-    acc.availableItems += availableItems;
-    acc.lowStockItems += lowStockItems;
-    acc.totalQuantity += totalQuantity;
-    
-    return acc;
-  }, {
-    totalItems: 0,
-    availableItems: 0,
-    lowStockItems: 0,
-    totalQuantity: 0
-  });
+export const StockSummary: React.FC<StockSummaryProps> = ({ stockData, className = '' }) => {
+  const calculateTotals = () => {
+    let totalItems = 0;
+    let totalTypes = 0;
+    const categoryStats: Record<string, { items: number; types: number }> = {};
 
-  const availabilityRate = stats.totalItems > 0 ? (stats.availableItems / stats.totalItems * 100) : 0;
+    Object.entries(stockData).forEach(([category, data]) => {
+      if (category === 'updated_at') return;
+      
+      const categoryItems = data.items.reduce((sum, item) => sum + item.quantity, 0);
+      const categoryTypes = data.items.length;
+      
+      totalItems += categoryItems;
+      totalTypes += categoryTypes;
+      
+      categoryStats[category] = {
+        items: categoryItems,
+        types: categoryTypes
+      };
+    });
+
+    return { totalItems, totalTypes, categoryStats };
+  };
+
+  const { totalItems, totalTypes, categoryStats } = calculateTotals();
+
+  const getMostStockedCategory = () => {
+    let maxItems = 0;
+    let maxCategory = '';
+    
+    Object.entries(categoryStats).forEach(([category, stats]) => {
+      if (stats.items > maxItems) {
+        maxItems = stats.items;
+        maxCategory = category;
+      }
+    });
+    
+    return { category: maxCategory, items: maxItems };
+  };
+
+  const mostStocked = getMostStockedCategory();
+
+  const formatNumber = (num: number) => {
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}k`;
+    return num.toString();
+  };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
-      <div className="flex items-center space-x-3 mb-6">
-        <div className="bg-blue-100 p-2 rounded-lg">
-          <TrendingUp className="h-6 w-6 text-blue-600" />
+    <div className={`bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-xl border border-indigo-100 overflow-hidden ${className}`}>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative z-10 flex items-center space-x-4">
+          <div className="relative">
+            <div className="absolute inset-0 bg-white/20 rounded-full animate-pulse"></div>
+            <BarChart3 className="w-8 h-8 relative z-10 drop-shadow-lg" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold mb-1">Stock Summary</h2>
+            <p className="text-indigo-100">Overview of all available items</p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-xl font-bold text-gray-900">Stock Overview</h2>
-          <p className="text-gray-600">Current inventory status</p>
-        </div>
+        
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+        <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/10 rounded-full translate-y-8 -translate-x-8"></div>
       </div>
-      
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-          <div className="flex items-center space-x-2 mb-2">
-            <Package className="h-5 w-5 text-blue-600" />
-            <span className="text-sm font-medium text-blue-700">Total Items</span>
+
+      {/* Summary Stats */}
+      <div className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          {/* Total Items */}
+          <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-emerald-100 rounded-lg">
+                <Package className="w-6 h-6 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Items</p>
+                <p className="text-2xl font-bold text-gray-900">{formatNumber(totalItems)}</p>
+              </div>
+            </div>
           </div>
-          <p className="text-2xl font-bold text-blue-900">{stats.totalQuantity}</p>
-          <p className="text-xs text-blue-600">{stats.totalItems} unique items</p>
+
+          {/* Unique Types */}
+          <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Layers className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Unique Types</p>
+                <p className="text-2xl font-bold text-gray-900">{totalTypes}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Top Category */}
+          <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-purple-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Top Category</p>
+                <p className="text-lg font-bold text-gray-900 capitalize">{mostStocked.category}</p>
+                <p className="text-sm text-gray-500">{formatNumber(mostStocked.items)} items</p>
+              </div>
+            </div>
+          </div>
         </div>
-        
-        <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-          <div className="flex items-center space-x-2 mb-2">
-            <CheckCircle className="h-5 w-5 text-green-600" />
-            <span className="text-sm font-medium text-green-700">Available</span>
+
+        {/* Category Breakdown */}
+        <div className="bg-white rounded-xl p-4 shadow-lg border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Category Breakdown</h3>
+          <div className="space-y-3">
+            {Object.entries(categoryStats).map(([category, stats]) => {
+              const percentage = totalItems > 0 ? (stats.items / totalItems) * 100 : 0;
+              
+              return (
+                <div key={category} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3 flex-1">
+                    <span className="text-sm font-medium text-gray-700 capitalize w-20">
+                      {category}
+                    </span>
+                    <div className="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500"
+                        style={{ width: `${percentage}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="text-right ml-4">
+                    <p className="text-sm font-semibold text-gray-900">
+                      {formatNumber(stats.items)}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {stats.types} types
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <p className="text-2xl font-bold text-green-900">{stats.availableItems}</p>
-          <p className="text-xs text-green-600">{availabilityRate.toFixed(1)}% in stock</p>
-        </div>
-        
-        <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
-          <div className="flex items-center space-x-2 mb-2">
-            <AlertTriangle className="h-5 w-5 text-yellow-600" />
-            <span className="text-sm font-medium text-yellow-700">Low Stock</span>
-          </div>
-          <p className="text-2xl font-bold text-yellow-900">{stats.lowStockItems}</p>
-          <p className="text-xs text-yellow-600">≤2 items remaining</p>
-        </div>
-        
-        <div className="bg-red-50 rounded-lg p-4 border border-red-200">
-          <div className="flex items-center space-x-2 mb-2">
-            <Package className="h-5 w-5 text-red-600" />
-            <span className="text-sm font-medium text-red-700">Out of Stock</span>
-          </div>
-          <p className="text-2xl font-bold text-red-900">{stats.totalItems - stats.availableItems}</p>
-          <p className="text-xs text-red-600">Items unavailable</p>
         </div>
       </div>
     </div>

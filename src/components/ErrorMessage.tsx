@@ -1,34 +1,40 @@
 import React from 'react';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface ErrorMessageProps {
   message: string;
-  onRetry: () => void;
+  onRetry?: () => void;
+  className?: string;
 }
 
-export const ErrorMessage: React.FC<ErrorMessageProps> = ({ message, onRetry }) => {
+export const ErrorMessage: React.FC<ErrorMessageProps> = ({ 
+  message, 
+  onRetry, 
+  className = '' 
+}) => {
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-xl shadow-lg p-8 max-w-md w-full text-center border border-gray-700">
-        <div className="bg-red-900/50 rounded-full p-3 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-          <AlertCircle className="h-8 w-8 text-red-400" />
+    <div className={`bg-red-50 border-l-4 border-red-400 p-6 rounded-lg shadow-sm ${className}`}>
+      <div className="flex items-start space-x-3">
+        <div className="flex-shrink-0">
+          <AlertTriangle className="w-6 h-6 text-red-400" />
         </div>
-        
-        <h2 className="text-xl font-semibold text-white mb-2">
-          Unable to Load Data
-        </h2>
-        
-        <p className="text-gray-400 mb-6">
-          {message}
-        </p>
-        
-        <button
-          onClick={onRetry}
-          className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 mx-auto"
-        >
-          <RefreshCw className="h-4 w-4" />
-          <span>Try Again</span>
-        </button>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-red-800 mb-2">
+            Oops! Something went wrong
+          </h3>
+          <p className="text-red-700 mb-4 leading-relaxed">
+            {message}
+          </p>
+          {onRetry && (
+            <button
+              onClick={onRetry}
+              className="inline-flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Try Again</span>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

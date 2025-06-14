@@ -1,83 +1,79 @@
 import React from 'react';
 import { StockItem as StockItemType } from '../types';
-import { formatQuantity, getStockStatus } from '../utils/formatUtils';
-import { AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
+import { getItemIcon } from '../utils/iconMapping';
+import { Package, Hash } from 'lucide-react';
 
 interface StockItemProps {
   item: StockItemType;
+  className?: string;
+  showQuantityBadge?: boolean;
 }
 
-export const StockItem: React.FC<StockItemProps> = ({ item }) => {
-  const stockStatus = getStockStatus(item.quantity);
+export const StockItem: React.FC<StockItemProps> = ({ 
+  item, 
+  className = '',
+  showQuantityBadge = true 
+}) => {
+  const ItemIcon = getItemIcon(item.name);
   
-  const getStatusConfig = () => {
-    switch (stockStatus) {
-      case 'in-stock':
-        return {
-          bgColor: 'bg-white hover:bg-gray-50',
-          borderColor: 'border-green-200 hover:border-green-300',
-          textColor: 'text-green-600',
-          icon: <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />,
-          badge: 'bg-green-100 text-green-700 border-green-200'
-        };
-      case 'low-stock':
-        return {
-          bgColor: 'bg-white hover:bg-gray-50',
-          borderColor: 'border-yellow-200 hover:border-yellow-300',
-          textColor: 'text-yellow-600',
-          icon: <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4" />,
-          badge: 'bg-yellow-100 text-yellow-700 border-yellow-200'
-        };
-      case 'out-of-stock':
-        return {
-          bgColor: 'bg-gray-50 hover:bg-gray-100',
-          borderColor: 'border-red-200 hover:border-red-300',
-          textColor: 'text-red-600',
-          icon: <XCircle className="h-3 w-3 sm:h-4 sm:w-4" />,
-          badge: 'bg-red-100 text-red-700 border-red-200'
-        };
-    }
-  };
-  
-  const getQuantityDisplay = () => {
-    if (item.quantity === 0) return 'Out of Stock';
-    if (item.quantity <= 2) return `×${item.quantity} LOW STOCK`;
-    return `×${formatQuantity(item.quantity)}`;
+  const getQuantityColor = (quantity: number) => {
+    if (quantity >= 10) return 'bg-green-500 text-white';
+    if (quantity >= 5) return 'bg-yellow-500 text-white';
+    if (quantity >= 1) return 'bg-orange-500 text-white';
+    return 'bg-red-500 text-white';
   };
 
-  const statusConfig = getStatusConfig();
+  const getQuantityText = (quantity: number) => {
+    if (quantity >= 1000) return `${(quantity / 1000).toFixed(1)}k`;
+    return quantity.toString();
+  };
 
   return (
-    <div className={`${statusConfig.bgColor} ${statusConfig.borderColor} rounded-xl border-2 p-3 sm:p-4 transition-all duration-300 hover:shadow-lg hover:scale-105`}>
-      <div className="flex items-start space-x-3">
-        {/* Item Image */}
-        <div className="flex-shrink-0">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 rounded-lg p-1 shadow-sm">
-            <img
-              src={item.image}
-              alt={item.name}
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                target.parentElement!.innerHTML = '<div class="w-full h-full bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">No Image</div>';
-              }}
-            />
+    <div className={`group relative bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden ${className}`}>
+      {/* Quantity Badge */}
+      {showQuantityBadge && (
+        <div className="absolute top-3 right-3 z-10">
+          <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-bold shadow-lg ${getQuantityColor(item.quantity)}`}>
+            <Hash className="w-3 h-3" />
+            <span>{getQuantityText(item.quantity)}</span>
           </div>
         </div>
-        
-        {/* Item Details */}
-        <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-gray-800 text-sm mb-2 line-clamp-2 leading-tight">
+      )}
+
+      {/* Item Content */}
+      <div className="p-6">
+        {/* Icon Container */}
+        <div className="flex justify-center mb-4">
+          <div className="relative">
+            {/* Glow Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-blue-500 rounded-full opacity-20 group-hover:opacity-30 transition-opacity duration-300 blur-sm"></div>
+            
+            {/* Icon Background */}
+            <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-full border-2 border-gray-200 group-hover:border-emerald-300 transition-all duration-300">
+              <ItemIcon className="w-8 h-8 text-gray-700 group-hover:text-emerald-600 transition-colors duration-300" />
+            </div>
+          </div>
+        </div>
+
+        {/* Item Name */}
+        <div className="text-center">
+          <h3 className="font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors duration-300 text-sm leading-tight">
             {item.name}
-          </h4>
+          </h3>
           
-          <div className={`inline-flex items-center space-x-2 px-2 sm:px-3 py-1 rounded-lg border text-xs font-bold ${statusConfig.badge}`}>
-            {statusConfig.icon}
-            <span>{getQuantityDisplay()}</span>
+          {/* Quantity Text */}
+          <div className="mt-2 flex items-center justify-center space-x-1 text-xs text-gray-500">
+            <Package className="w-3 h-3" />
+            <span>Qty: {item.quantity}</span>
           </div>
         </div>
+
+        {/* Hover Effect Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
       </div>
+
+      {/* Bottom Border Animation */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-blue-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
     </div>
   );
 };
