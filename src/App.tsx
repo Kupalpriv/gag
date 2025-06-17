@@ -133,10 +133,10 @@ function App() {
                   <span className="text-2xl">👨‍💻</span>
                 </div>
                 <div className="text-center">
-                  <h4 className="text-lg font-semibold text-white">Crafted by Churchill</h4>
+                  <h4 className="text-lg font-semibold text-white">Crafted by Riyo</h4>
                 </div>
                 <a 
-                  href="https://www.facebook.com/Churchill.Dev4100" 
+                  href="https://www.facebook.com/profile.php?id=61577360791665" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="bg-white/20 hover:bg-white/30 text-white p-3 rounded-lg transition-all duration-300 hover:scale-105 backdrop-blur-sm group"
@@ -151,7 +151,7 @@ function App() {
 
           <div className="border-t border-gray-700 mt-6 pt-6 text-center">
             <div className="text-gray-400 text-sm">
-              © 2025 chillimansi.
+              © 2025 RIYO.
             </div>
           </div>
         </div>
